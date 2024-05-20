@@ -13,7 +13,7 @@ type Reader interface {
 * 返回的错误注意io.EOF类型与其他类型。
 
 ## Writer 接口
-```go
+``` go
 type Writer interface {
     Write(p []byte) (n int, err error)
 }
@@ -23,7 +23,7 @@ type Writer interface {
 * 若 Write 返回的 n < len(p)，它就必须返回一个 非nil 的错误。
 
 ## Closer 接口
-```go
+``` go
 type Closer interface {
     Close() error
 }
