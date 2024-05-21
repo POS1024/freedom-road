@@ -106,7 +106,7 @@ bufio 包实现了缓存IO。它包装了 io.Reader 和 io.Writer 对象，创�
 
 ## 4.1 bufio.Reader 类型
 ``` go
-    type Reader struct {
+        type Reader struct {
 		buf          []byte		// 缓存
 		rd           io.Reader	// 底层的io.Reader
 		// r:从buf中读走的字节（偏移）；w:buf中填充内容的偏移；
@@ -160,7 +160,7 @@ bufio 包实现了缓存IO。它包装了 io.Reader 和 io.Writer 对象，创�
 * 如果 `ReadBytes` 返回的结果 `line` 不是以界定符 `delim` 结尾，那么返回的 `err` 也一定不等于 nil（可能是 `bufio.ErrBufferFull` 或 `io.EOF` ）。
 
 ``` go
-    func (b *Reader) ReadString(delim byte) (line string, err error) {
+        func (b *Reader) ReadString(delim byte) (line string, err error) {
 		bytes, err := b.ReadBytes(delim)
 		return string(bytes), err
 	}
@@ -178,8 +178,8 @@ bufio 包实现了缓存IO。它包装了 io.Reader 和 io.Writer 对象，创�
 
 ## 4.3 Scanner 类型和方法
 ``` go
-    scanner := bufio.NewScanner(os.Stdin)
-    scanner.Split(bufio.ScanWords)
+        scanner := bufio.NewScanner(os.Stdin)
+        scanner.Split(bufio.ScanWords)
 	for scanner.Scan() {
 	    fmt.Println(scanner.Text()) // Println will add back the final '\n'
 	}
@@ -196,7 +196,7 @@ bufio 包实现了缓存IO。它包装了 io.Reader 和 io.Writer 对象，创�
 
 ## 4.4 Writer 类型和方法
 ``` go
-    type Writer struct {
+        type Writer struct {
 		err error		// 写过程中遇到的错误
 		buf []byte		// 缓存
 		n   int			// 当前缓存中的字节数
@@ -227,7 +227,7 @@ bufio 包实现了缓存IO。它包装了 io.Reader 和 io.Writer 对象，创�
 * `Flush` 方法将缓存中的所有数据写入底层的 io.Writer 对象中。
 
 ``` go
-    // 实现了 io.ReaderFrom 接口
+        // 实现了 io.ReaderFrom 接口
 	func (b *Writer) ReadFrom(r io.Reader) (n int64, err error)
 	
 	// 实现了 io.Writer 接口
@@ -259,7 +259,7 @@ bufio 包实现了缓存IO。它包装了 io.Reader 和 io.Writer 对象，创�
 
 ## 4.6 Buffer 类型
 ``` go
-    buffer := bytes.NewBufferString("xxxxx")
+        buffer := bytes.NewBufferString("xxxxx")
 	buffer.WriteString("a")
 	buffer.WriteString("b")
 	fmt.Println(buffer.String())
