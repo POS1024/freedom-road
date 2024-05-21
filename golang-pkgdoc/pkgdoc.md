@@ -49,9 +49,9 @@
         for _,fileInfo := range fileInfos {
             # fileInfo fs.FileInfo
             if fileInfo.IsDir() {
-                # DIR
+                // DIR
             }else{
-                # FILE
+                // FILE
                 fileName := fileInfo.Name()
                 fmt.Println(fileName)
             }
@@ -257,4 +257,160 @@ bufio 包实现了缓存IO。它包装了 io.Reader 和 io.Writer 对象，创�
 ```
 * 可以使用 `bufio.Reader` 和 `bufio.Writer` 所有的函数。
 
-# 5. 待定
+## 4.6 Buffer 类型
+``` go
+    buffer := bytes.NewBufferString("xxxxx")
+	buffer.WriteString("a")
+	buffer.WriteString("b")
+	fmt.Println(buffer.String())
+```
+
+# 5. strings — 字符串操作
+
+## 5.1 字符串比较
+``` go
+    // Compare 函数，用于比较两个字符串的大小，如果两个字符串相等，返回为 0。如果 a 小于 b ，返回 -1 ，反之返回 1 。不推荐使用这个函数，直接使用 == != > < >= <= 等一系列运算符更加直观。
+    func Compare(a, b string) int 
+    //   EqualFold 函数，计算 s 与 t 忽略字母大小写后是否相等。
+    func EqualFold(s, t string) bool
+```
+* `strings.Compare("ab","ab")`
+* `strings.EqualFold("ab","ab")`
+
+## 5.2 是否存在某个字符或子串
+``` go
+    // 子串 substr 在 s 中，返回 true
+    func Contains(s, substr string) bool
+    // chars 中任何一个 Unicode 代码点在 s 中，返回 true
+    func ContainsAny(s, chars string) bool
+    // Unicode 代码点 r 在 s 中，返回 true
+    func ContainsRune(s string, r rune) bool
+```
+* `strings.Contains("abcdef",""cd")`
+
+## 5.3 子串出现次数 ( 字符串匹配 )
+Rabin-Karp 算法
+``` go
+    func Count(s, sep string) int
+```
+* 当 `sep` 为空时，`Count` 的返回值是：utf8.RuneCountInString(s) + 1 。
+
+## 5.4 字符串分割为[]string
+``` go
+    func Fields(s string) []string
+```
+* Fields 用一个或多个连续的空格分隔字符串 s，返回子字符串的数组（slice）。
+* 如果字符串 s 只包含空格，则返回空列表 ([]string 的长度为 0）。
+* 其中，空格的定义是 unicode.IsSpace。
+
+``` go
+    func FieldsFunc(s string, f func(rune) bool) []string
+    strings.FieldsFunc("  foo bar  baz   ", unicode.IsSpace)
+```
+* `FieldsFunc` 用这样的 `Unicode` 代码点 `c` 进行分隔：满足 `f(c)` 返回 `true`。
+* 该函数返回[]string。如果字符串 s 中所有的代码点 (unicode code points) `都满足 f(c)` 或者 `s 是空`，则 `FieldsFunc` 返回`空 slice`。
+* `Fields` 函数就是调用 `FieldsFunc` 实现的。
+
+## 5.5 Split
+``` go
+    func Split(s, sep string) []string { return genSplit(s, sep, 0, -1) }
+```
+## 5.6 字符串是否有某个前缀或后缀
+``` go
+    // s 中是否以 prefix 开始
+    func HasPrefix(s, prefix string) bool {
+    return len(s) >= len(prefix) && s[0:len(prefix)] == prefix
+    }
+    // s 中是否以 suffix 结尾
+    func HasSuffix(s, suffix string) bool {
+    return len(s) >= len(suffix) && s[len(s)-len(suffix):] == suffix
+    }
+```
+* 如果 `prefix` 或 `suffix` 为 "" , 返回值总是 `true`。
+
+## 5.7 字符或子串在字符串中出现的位置
+``` go
+    // 在 s 中查找 sep 的第一次出现，返回第一次出现的索引
+    func Index(s, sep string) int
+    // 查找字符 c 在 s 中第一次出现的位置，其中 c 满足 f(c) 返回 true
+    func IndexFunc(s string, f func(rune) bool) int
+```
+
+## 5.8 字符串 JOIN 操作
+``` go
+    func Join(a []string, sep string) string
+```
+* 将字符串数组（或 slice）连接起来可以通过 `Join` 实现。
+
+## 5.9 字符串重复几次
+``` go
+    func Repeat(s string, count int) string
+```
+
+## 5.10 字符替换
+``` go
+    func Map(mapping func(rune) rune, s string) string
+    mapping := func(r rune) rune {
+        switch {
+        case r >= 'A' && r <= 'Z': // 大写字母转小写
+            return r + 32
+        case r >= 'a' && r <= 'z': // 小写字母不处理
+            return r
+        case unicode.Is(unicode.Han, r): // 汉字换行
+            return '\n'
+        }
+        return -1 // 过滤所有非字母、汉字的字符
+    }
+    fmt.Println(strings.Map(mapping, "Hello你#￥%……\n（'World\n,好Hello^(&(*界gopher..."))
+```
+* `Map` 函数，将 `s` 的每一个字符按照 `mapping` 的规则做映射替换，如果 `mapping` 返回值 <0 ，则 `舍弃该字符`。
+* 该方法只能对每一个字符做处理，但处理方式很灵活，可以方便的过滤，筛选汉字等。
+
+## 5.11 字符串子串替换
+``` go
+    // 用 new 替换 s 中的 old，一共替换 n 个。
+    // 如果 n < 0，则不限制替换次数，即全部替换
+    func Replace(s, old, new string, n int) string
+    // 该函数内部直接调用了函数 Replace(s, old, new , -1)
+    func ReplaceAll(s, old, new string) string
+```
+* 进行字符串替换时，考虑到性能问题，能不用正则尽量别用，应该用这里的函数。
+
+## 5.12 修剪
+``` go
+    // 将 s 左侧和右侧中匹配 cutset 中的任一字符的字符去掉
+    func Trim(s string, cutset string) string
+    // 将 s 左侧的匹配 cutset 中的任一字符的字符去掉
+    func TrimLeft(s string, cutset string) string
+    // 将 s 右侧的匹配 cutset 中的任一字符的字符去掉
+    func TrimRight(s string, cutset string) string
+    // 如果 s 的前缀为 prefix 则返回去掉前缀后的 string , 否则 s 没有变化。
+    func TrimPrefix(s, prefix string) string
+    // 如果 s 的后缀为 suffix 则返回去掉后缀后的 string , 否则 s 没有变化。
+    func TrimSuffix(s, suffix string) string
+    // 将 s 左侧和右侧的间隔符去掉。常见间隔符包括：'\t', '\n', '\v', '\f', '\r', ' ', U+0085 (NEL)
+    func TrimSpace(s string) string
+    // 将 s 左侧和右侧的匹配 f 的字符去掉
+    func TrimFunc(s string, f func(rune) bool) string
+    // 将 s 左侧的匹配 f 的字符去掉
+    func TrimLeftFunc(s string, f func(rune) bool) string
+    // 将 s 右侧的匹配 f 的字符去掉
+    func TrimRightFunc(s string, f func(rune) bool) string
+```
+
+## 5.13 Reader 类型
+``` go
+    func NewReader(s string) *Reader
+```
+* 实现了 io 包中的Reader接口。
+
+## 5.14 Builder 类型
+``` go
+    func NewReplacer(oldnew ...string) *Replacer
+```
+* 现了 `io` 包下的 `Writer`, `ByteWriter`, `StringWriter` 等接口，可以向该对象内写入数据。
+* `Builder` 没有实现 `Reader` 等接口，所以该类型不可读，但提供了 `String` 方法可以获取对象内的数据。
+
+# 6. bytes — byte slice 便利操作
+
+
