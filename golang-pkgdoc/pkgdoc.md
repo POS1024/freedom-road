@@ -412,5 +412,16 @@ Rabin-Karp 算法
 * `Builder` 没有实现 `Reader` 等接口，所以该类型不可读，但提供了 `String` 方法可以获取对象内的数据。
 
 # 6. bytes — byte slice 便利操作
-
+``` go
+    // 子 slice subslice 在 b 中，返回 true
+    func Contains(b, subslice []byte) bool
+    
+    // slice sep 在 s 中出现的次数（无重叠）
+    func Count(s, sep []byte) int
+    
+    // 将 []byte 转换为 []rune
+    func Runes(s []byte) []rune
+    
+    func NewReader(b []byte) *Reader
+```
 
