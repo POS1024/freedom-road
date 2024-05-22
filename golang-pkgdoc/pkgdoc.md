@@ -426,5 +426,32 @@ Rabin-Karp 算法
 ```
 
 # 7. strconv — 字符串和基本数据类型之间转换
+这里的基本数据类型包括：布尔、整型（包括有 / 无符号、二进制、八进制、十进制和十六进制）和浮点型等。
 
+## 7.1 字符串转为整型
+``` go
+    func ParseInt(s string, base int, bitSize int) (i int64, err error)
+    strconv.ParseInt("1000", 10, 64)
+```
+* `ParseInt` 转为有符号整型。
+* 参数 `base` 代表字符串按照给定的进制进行解释。一般的，`base` 的取值为 `2~36`，如果 `base` 的值为 `0` ，则会根据字符串的前缀来确定 `base` 的值：`0x` 表示 `16 进制`； `0` 表示 `8 进制`；否则就是 `10 进制`。
+* 参数 `bitSize` 表示的是整数取值范围，或者说整数的具体类型。取值 0、8、16、32 和 64 分别代表 int、int8、int16、int32 和 int64。
 
+## 7.2 整型转为字符串
+``` go
+    // 有符号整型转字符串
+    func FormatInt(i int64, base int) string
+    strconv.FormatInt(10, 10)
+```
+
+## 7.3 字符串和浮点数之间的转换
+``` go
+    func ParseFloat(s string, bitSize int) (f float64, err error)
+    strconv.ParseFloat("3.14", 64)
+    func FormatFloat(f float64, fmt byte, prec, bitSize int) string
+    strconv.FormatFloat(1223.13252, 'e', 3, 32)
+```
+* 由于浮点数有精度的问题，精度不一样，`ParseFloat` 和 `FormatFloat` 可能达不到互逆的效果。
+*  `prec` 表示有效数字，对于 'e', 'E' 和 'f'，有效数字用于小数点之后的位数；对于 'g' 和 'G'，则是所有的有效数字。
+
+# 8. sort —— 排序算法
